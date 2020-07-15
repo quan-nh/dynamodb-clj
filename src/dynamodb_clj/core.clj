@@ -1,5 +1,7 @@
 (ns dynamodb-clj.core
-  (:require [taoensso.faraday :as far]))
+  (:require [clojure.data.json :as json]
+            [taoensso.faraday :as far]
+            [clojure.java.io :as io]))
 
 (def client-opts {:access-key "fakeMyKeyId"
                   :secret-key "fakeSecretAccessKey"
@@ -14,13 +16,16 @@
 (far/list-tables client-opts)
 (far/describe-table client-opts :movies)
 
+(doseq [movie (json/read-str (slurp (io/resource "moviedata.json"))
+                             :key-fn keyword)]
+  (far/put-item client-opts :movies movie))
+
 (far/put-item client-opts
               :movies
               {:year  2015
                :title "The Big New Movie"
                :info  {:plot   "Nothing happens at all."
-                       :rating 0}
-               })
+                       :rating 0}})
 
 (far/get-item client-opts :movies {:year  2015
                                    :title "The Big New Movie"})

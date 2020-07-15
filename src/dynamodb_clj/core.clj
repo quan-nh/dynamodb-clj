@@ -55,3 +55,10 @@
                                       :title "The Big New Movie"}
                  #_{:cond-expr      "info.rating <= :val"
                     :expr-attr-vals {":val" 5.0}})
+
+;; query
+(far/query client-opts :movies {:year [:eq 1985]})
+
+(far/query client-opts :movies {:year  [:eq 1992]
+                                :title [:between ["A" "L"]]}
+           {:return [:year :title :info]})

@@ -32,3 +32,21 @@
                                    ":p" "Everything happens all at once."
                                    ":a" ["Larry" "Moe" "Curly"]}
                   :return         :updated-new})
+
+(far/update-item client-opts :movies {:year  2015
+                                      :title "The Big New Movie"}
+                 {:update-expr    "SET info.rating = info.rating + :val"
+                  :expr-attr-vals {":val" 1}
+                  :return         :updated-new})
+
+(far/update-item client-opts :movies {:year  2015
+                                      :title "The Big New Movie"}
+                 {:update-expr    "REMOVE info.actors[0]"
+                  :cond-expr      "size(info.actors) >= :num"
+                  :expr-attr-vals {":num" 3}
+                  :return         :updated-new})
+
+(far/delete-item client-opts :movies {:year  2015
+                                      :title "The Big New Movie"}
+                 #_{:cond-expr      "info.rating <= :val"
+                    :expr-attr-vals {":val" 5.0}})
